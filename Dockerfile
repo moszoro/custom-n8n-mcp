@@ -3,7 +3,9 @@ FROM n8nio/n8n:latest
 USER root
 
 # Install the desired npm packages globally
-RUN --rm -it ghcr.io/astral-sh/uv:debian uv --help
+FROM python:3.12-slim-bookworm
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
 RUN npm install -g firecrawl-mcp
 RUN uvx --from git+https://github.com/adhikasp/mcp-reddit.git mcp-reddit
 
