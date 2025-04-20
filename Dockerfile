@@ -1,10 +1,12 @@
-# Add uvx (copy from prebuilt image)
+# Stage 1: Get uvx binary
 FROM ghcr.io/astral-sh/uv:latest as uvx-stage
 
+# Final image
 FROM n8nio/n8n:latest
 
 USER root
 
+# Install required tools
 RUN apk add --no-cache \
     bash \
     curl \
@@ -14,17 +16,17 @@ RUN apk add --no-cache \
     npm \
     git
 
-# Copy uv and uvx binaries
+# Copy uv and uvx
 COPY --from=uvx-stage /uv /bin/uv
 COPY --from=uvx-stage /uvx /bin/uvx
 
 # Install CLI tools
 RUN npm install -g firecrawl-mcp @smithery/cli
 
-# ✅ Install mcp-reddit via uvx, no run
-RUN uvx --from git+https://github.com/adhikasp/mcp-reddit.git mcp-reddit --help || true
+# ✅ Install mcp-reddit safely (no blocking)
+RUN uvx --from git+https://github.com/adhikasp/mcp-reddit.git mcp-reddit --entrypoint="echo Installed mcp-reddit"
 
-# ✅ Ensure installed tool path is visible
+# Make sure the installed binary path is exposed
 ENV PATH="/root/.uvx/bin:$PATH"
 
 USER node
