@@ -1,5 +1,5 @@
 # ── Stage 1 ───────────────────────────────────────────────
-FROM ghcr.io/astral-sh/uv:latest AS uvstage          # gives us /usr/local/bin/uv
+FROM ghcr.io/astral-sh/uv:latest AS uvstage
 
 # ── Final n8n image ──────────────────────────────────────
 FROM n8nio/n8n:latest
