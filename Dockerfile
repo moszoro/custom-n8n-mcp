@@ -1,36 +1,31 @@
+# Stage 1: Get prebuilt uv binary
+FROM ghcr.io/astral-sh/uv:latest as uvx-stage
+
+# Stage 2: Build your n8n image
 FROM n8nio/n8n:latest
 
 USER root
 
-# Install dependencies
+# Install system dependencies
 RUN apk add --no-cache \
     bash \
     curl \
-    python3 \
-    py3-pip \
-    gcc \
-    musl-dev \
-    libc-dev \
     nodejs \
     npm \
-    git \
-    openssl \
-    build-base
+    python3 \
+    py3-pip \
+    git
 
-# Install Rust
-RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
-ENV PATH="/root/.cargo/bin:${PATH}"
+# Copy uv binary from uv image
+COPY --from=uvx-stage /uv /bin/uv
 
-# Install uv from GitHub repo
-RUN cargo install --git https://github.com/astral-sh/uv uv --locked
-
-# Confirm it's there
+# Optional: check it's there
 RUN uv --version
 
 # Install firecrawl-mcp
 RUN npm install -g firecrawl-mcp
 
-# Install mcp-reddit via uv
+# Use uv run (replaces uvx)
 RUN uv run --from git+https://github.com/adhikasp/mcp-reddit.git mcp-reddit
 
 USER node
