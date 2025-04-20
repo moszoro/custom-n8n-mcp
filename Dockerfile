@@ -11,16 +11,19 @@ RUN apk add --no-cache \
     py3-pip \
     bash
 
-# Install uv (this installs uvx into /root/.cargo/bin)
+# Install uv (includes `uv run`)
 RUN curl -Ls https://astral.sh/uv/install.sh | bash
 
-# Add uvx to PATH explicitly
+# Add uv to PATH
 ENV PATH="/root/.cargo/bin:${PATH}"
+
+# Optional: show what's installed (for debug)
+RUN ls -l /root/.cargo/bin
 
 # Install firecrawl-mcp
 RUN npm install -g firecrawl-mcp
 
-# Install mcp-reddit using uvx
-RUN /root/.cargo/bin/uvx --from git+https://github.com/adhikasp/mcp-reddit.git mcp-reddit
+# Use `uv run` instead of `uvx`
+RUN uv run --from git+https://github.com/adhikasp/mcp-reddit.git mcp-reddit
 
 USER node
