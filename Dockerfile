@@ -5,6 +5,7 @@ USER root
 
 # Install the desired npm packages globally
 RUN npm install -g firecrawl-mcp
+RUN uvx --from git+https://github.com/adhikasp/mcp-reddit.git mcp-reddit
 
 # Revert to the node user for security purposes
 USER node
