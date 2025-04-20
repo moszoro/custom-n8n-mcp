@@ -13,6 +13,6 @@ RUN apk add --no-cache \
     git
 
 # Install global npm tools
-RUN npm install -g firecrawl-mcp @smithery/cli
+RUN npm install -g firecrawl-mcp @smithery/cli n8n-nodes-mcp
 
 USER node
