@@ -21,8 +21,8 @@ RUN apk add --no-cache \
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
 ENV PATH="/root/.cargo/bin:${PATH}"
 
-# Install uv from GitHub (not crates.io)
-RUN cargo install --git https://github.com/astral-sh/uv --locked
+# Install uv from GitHub repo
+RUN cargo install --git https://github.com/astral-sh/uv uv --locked
 
 # Confirm it's there
 RUN uv --version
