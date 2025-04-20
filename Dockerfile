@@ -4,26 +4,31 @@ USER root
 
 # Install required packages
 RUN apk add --no-cache \
+    bash \
     curl \
-    nodejs \
-    npm \
     python3 \
     py3-pip \
-    bash
+    gcc \
+    musl-dev \
+    libc-dev \
+    nodejs \
+    npm \
+    git \
+    openssl
 
-# Install uv (includes `uv run`)
+# Install uv
 RUN curl -Ls https://astral.sh/uv/install.sh | bash
 
-# Add uv to PATH
+# Add to path
 ENV PATH="/root/.cargo/bin:${PATH}"
 
-# Optional: show what's installed (for debug)
+# Debug: show installed binaries
 RUN ls -l /root/.cargo/bin
 
 # Install firecrawl-mcp
 RUN npm install -g firecrawl-mcp
 
-# Use `uv run` instead of `uvx`
+# Use uv run to install mcp-reddit
 RUN uv run --from git+https://github.com/adhikasp/mcp-reddit.git mcp-reddit
 
 USER node
