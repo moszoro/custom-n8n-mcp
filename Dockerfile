@@ -1,3 +1,7 @@
+# Stage 1: Get uv + uvx from official prebuilt image
+FROM ghcr.io/astral-sh/uv:latest as uvx-stage
+
+# Stage 2: n8n + tools
 FROM n8nio/n8n:latest
 
 USER root
@@ -12,7 +16,14 @@ RUN apk add --no-cache \
     npm \
     git
 
-# Install global npm tools
-RUN npm install -g firecrawl-mcp @smithery/cli n8n-nodes-mcp
+# Copy uv and uvx binaries
+COPY --from=uvx-stage /uv /bin/uv
+COPY --from=uvx-stage /uvx /bin/uvx
+
+# Check if uvx works
+RUN uvx --version
+
+# Install firecrawl-mcp globally
+RUN npm install -g firecrawl-mcp
 
 USER node
