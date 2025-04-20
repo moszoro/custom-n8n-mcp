@@ -26,7 +26,4 @@ RUN uvx --version
 # Install firecrawl-mcp globally
 RUN npm install -g firecrawl-mcp
 
-# Install mcp-reddit using uvx
-RUN uvx --from git+https://github.com/adhikasp/mcp-reddit.git mcp-reddit
-
 USER node
