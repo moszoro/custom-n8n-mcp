@@ -13,7 +13,7 @@ RUN apk add --no-cache \
     git
 
 # Install pipx and uvx
-RUN pip install pipx && \
+RUN pip install pipx --break-system-packages && \
     pipx ensurepath && \
     pipx install uvx && \
     ln -s /root/.local/pipx/venvs/uvx/bin/uvx /usr/local/bin/uvx
