@@ -3,7 +3,6 @@ USER root
 
 RUN apk add --no-cache python3 py3-pip
 
-RUN pip install --upgrade pip \
- && pip install uv
+RUN pip install uv
 
 USER node
