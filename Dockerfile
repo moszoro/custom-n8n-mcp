@@ -1,12 +1,8 @@
-# Stage 1: Get uv + uvx from official prebuilt image
-FROM ghcr.io/astral-sh/uv:latest as uvx-stage
-
-# Stage 2: n8n + tools
 FROM n8nio/n8n:latest
 
 USER root
 
-# Install required packages
+# Install dependencies
 RUN apk add --no-cache \
     bash \
     curl \
@@ -16,16 +12,13 @@ RUN apk add --no-cache \
     npm \
     git
 
-# Copy uv and uvx binaries
-COPY --from=uvx-stage /uv /bin/uv
-COPY --from=uvx-stage /uvx /bin/uvx
+# Install npm tools
+RUN npm install -g firecrawl-mcp @smithery/cli
 
-# Check if uvx works
-RUN uvx --version
+# Clone mcp-reddit manually instead of using uvx
+RUN git clone https://github.com/adhikasp/mcp-reddit.git /mcp-reddit
 
-# Install firecrawl-mcp globally
-RUN npm install -g firecrawl-mcp
-
-RUN uvx --download-only --from git+https://github.com/adhikasp/mcp-reddit.git mcp-reddit
+# Make sure the path is visible
+ENV PATH="/mcp-reddit:$PATH"
 
 USER node
