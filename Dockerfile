@@ -8,13 +8,16 @@ RUN python3 -m venv /opt/venv \
  && /opt/venv/bin/pip install --upgrade pip \
  && /opt/venv/bin/pip install uv
 
-# Optional: create a Node project inside venv for isolated n8n
+# Add Python venv (for uv) to PATH
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Optional: install n8n in isolated node_modules
 RUN mkdir -p /opt/venv/node \
  && cd /opt/venv/node \
  && npm init -y \
  && npm install n8n
 
-# Add both Python venv and local node_modules/.bin to PATH
-ENV PATH="/opt/venv/bin:/opt/venv/node/node_modules/.bin:$PATH"
+# Add local node_modules/.bin (for n8n) to PATH
+ENV PATH="/opt/venv/node/node_modules/.bin:$PATH"
 
 USER node
