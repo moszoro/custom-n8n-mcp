@@ -1,27 +1,26 @@
-# Stage 1: Grab uvx binary from UV image
-FROM ghcr.io/astral-sh/uv:latest as uvx-stage
-
-# Stage 2: Build n8n with required tools
 FROM n8nio/n8n:latest
 
+# Switch to root to install dependencies
 USER root
 
-# Install dependencies using Alpine package manager
+# Install system packages
 RUN apk add --no-cache \
     curl \
     nodejs \
     npm \
     python3 \
-    py3-pip
+    py3-pip \
+    bash
 
-# Install firecrawl-mcp globally
+# Install uv manually
+RUN curl -Ls https://astral.sh/uv/install.sh | bash
+ENV PATH="/root/.cargo/bin:${PATH}"
+
+# Install firecrawl-mcp
 RUN npm install -g firecrawl-mcp
 
-# Copy uv and uvx binaries from stage
-COPY --from=uvx-stage /uv /uvx /bin/
-
-# Install mcp-reddit using uvx
+# Install mcp-reddit via uvx
 RUN uvx --from git+https://github.com/adhikasp/mcp-reddit.git mcp-reddit
 
-# Switch back to non-root user
+# Return to non-root user for security
 USER node
