@@ -2,7 +2,7 @@ FROM n8nio/n8n:latest
 
 USER root
 
-# Install required packages
+# Install dependencies
 RUN apk add --no-cache \
     bash \
     curl \
@@ -21,19 +21,16 @@ RUN apk add --no-cache \
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
 ENV PATH="/root/.cargo/bin:${PATH}"
 
-# Confirm Rust is available
-RUN rustc --version && cargo --version
+# Install uv from GitHub (not crates.io)
+RUN cargo install --git https://github.com/astral-sh/uv --locked
 
-# Install uv
-RUN cargo install uv
-
-# Confirm uv is available
+# Confirm it's there
 RUN uv --version
 
 # Install firecrawl-mcp
 RUN npm install -g firecrawl-mcp
 
-# Use uv to install mcp-reddit
+# Install mcp-reddit via uv
 RUN uv run --from git+https://github.com/adhikasp/mcp-reddit.git mcp-reddit
 
 USER node
