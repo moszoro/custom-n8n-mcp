@@ -2,13 +2,14 @@ FROM n8nio/n8n:latest
 
 USER root
 
-# base packages + glibc compatibility for uv
-RUN apk add --no-cache bash curl git libc6-compat
+# tools needed by installer + glibc compatibility for uv
+RUN apk add --no-cache bash curl git tar xz libc6-compat
 
-# install Astral uv directly into /usr/local/bin
-# -s -- -b /usr/local/bin  → install script “silent” and copy binary to that dir
-RUN curl -Ls https://astral.sh/uv/install.sh | sh -s -- -b /usr/local/bin \
- && ln -s /usr/local/bin/uv /usr/local/bin/uvx 
+# download installer, run with bash, place binary into /usr/local/bin
+RUN curl -Ls https://astral.sh/uv/install.sh -o /tmp/install_uv.sh \
+ && bash /tmp/install_uv.sh -b /usr/local/bin \
+ && ln -s /usr/local/bin/uv /usr/local/bin/uvx \
+ && rm /tmp/install_uv.sh
 
 ENV PATH="/usr/local/bin:${PATH}"
 USER node
