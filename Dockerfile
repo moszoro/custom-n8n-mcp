@@ -16,18 +16,23 @@ RUN apk add --no-cache \
     npm \
     git
 
-# Copy uv and uvx
+# Copy uv and uvx to global bin
 COPY --from=uvx-stage /uv /usr/local/bin/uv
 COPY --from=uvx-stage /uvx /usr/local/bin/uvx
 
 # Make sure binaries are executable
 RUN chmod +x /usr/local/bin/uv /usr/local/bin/uvx
 
+# Also symlink uvx inside .n8n in node user's home
+RUN mkdir -p /home/node/.n8n && \
+    ln -s /usr/local/bin/uvx /home/node/.n8n/uvx && \
+    chown -R node:node /home/node/.n8n
+
 # Install CLI tools
 RUN npm install -g firecrawl-mcp
 
-# Ensure PATH includes the location (already default, just for clarity)
+# Expose path (already default, but explicit)
 ENV PATH="/usr/local/bin:$PATH"
 
-# Switch back to non-root user (node)
+# Switch back to non-root user
 USER node
