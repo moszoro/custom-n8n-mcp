@@ -14,21 +14,26 @@ RUN apk add --no-cache \
     nodejs \
     npm \
     git \
-    openssl
+    openssl \
+    build-base
 
-# Install uv
-RUN curl -Ls https://astral.sh/uv/install.sh | bash
-
-# Add to path
+# Install Rust
+RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
 ENV PATH="/root/.cargo/bin:${PATH}"
 
-# Debug: show installed binaries
-RUN ls -l /root/.cargo/bin
+# Confirm Rust is available
+RUN rustc --version && cargo --version
+
+# Install uv
+RUN cargo install uv
+
+# Confirm uv is available
+RUN uv --version
 
 # Install firecrawl-mcp
 RUN npm install -g firecrawl-mcp
 
-# Use uv run to install mcp-reddit
+# Use uv to install mcp-reddit
 RUN uv run --from git+https://github.com/adhikasp/mcp-reddit.git mcp-reddit
 
 USER node
