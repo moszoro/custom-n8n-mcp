@@ -1,12 +1,8 @@
-# Stage 1: Get uvx binary
-FROM ghcr.io/astral-sh/uv:latest as uvx-stage
-
-# Final image
 FROM n8nio/n8n:latest
 
 USER root
 
-# Install required tools
+# Install required system tools
 RUN apk add --no-cache \
     bash \
     curl \
@@ -16,18 +12,17 @@ RUN apk add --no-cache \
     npm \
     git
 
-# Copy uv and uvx
-COPY --from=uvx-stage /uv /bin/uv
-COPY --from=uvx-stage /uvx /bin/uvx
+# Install pipx and uvx
+RUN pip install pipx && \
+    pipx ensurepath && \
+    pipx install uvx && \
+    ln -s /root/.local/pipx/venvs/uvx/bin/uvx /usr/local/bin/uvx
 
 # Install CLI tools
 RUN npm install -g firecrawl-mcp
 
+# Add pipx binary path to global PATH
+ENV PATH="/root/.local/bin:$PATH"
 
-# ✅ Install mcp-reddit safely (no blocking)
-RUN uvx --from git+https://github.com/adhikasp/mcp-reddit.git mcp-reddit --entrypoint="echo Installed mcp-reddit"
-
-# Make sure the installed binary path is exposed
-ENV PATH="/root/.uvx/bin:$PATH"
-
+# ✅ Don't run mcp-reddit now — install it later at runtime (or in start command)
 USER node
