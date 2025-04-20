@@ -5,10 +5,7 @@ FROM n8nio/n8n:latest
 USER root
 
 # Install Python and pip
-RUN apt-get update && \
-    apt-get install -y python3 python3-pip python3-venv && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache python3 py3-pip python3-venv
 
 # Create a Python virtual environment and install uv
 RUN python3 -m venv /opt/venv && \
