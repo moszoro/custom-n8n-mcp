@@ -1,7 +1,10 @@
 FROM n8nio/n8n:latest
 # Switch to root user to install global npm packages
 USER root
-FROM node:16
+RUN apt-get update && \
+    apt-get install -y curl && \
+    curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
+    apt-get install -y nodejs
 # Install the desired npm packages globally
 FROM python:3.12-slim-bookworm
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
