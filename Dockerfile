@@ -2,7 +2,6 @@ FROM n8nio/n8n:latest
 
 USER root
 
-# Install system tools
 RUN apk add --no-cache \
     bash \
     curl \
@@ -13,17 +12,16 @@ RUN apk add --no-cache \
     git \
     build-base
 
-# Install pipx inside virtualenv and install uvx
+# Install pipx and uvx cleanly
 RUN python3 -m venv /venv && \
-    . /venv/bin/activate && \
-    pip install pipx && \
+    /venv/bin/pip install pipx && \
     /venv/bin/pipx install uvx && \
     ln -s /root/.local/pipx/venvs/uvx/bin/uvx /usr/local/bin/uvx
 
+# Optional: verify
+RUN uvx --version || echo "uvx failed"
+
 # Install global npm tools
 RUN npm install -g firecrawl-mcp @smithery/cli
-
-# Add pipx bin path for safety
-ENV PATH="/root/.local/bin:$PATH"
 
 USER node
