@@ -1,7 +1,12 @@
+# Stage 1: Get uvx binary
+FROM ghcr.io/astral-sh/uv:latest as uvx-stage
+
+# Final image
 FROM n8nio/n8n:latest
 
 USER root
 
+# Install required tools
 RUN apk add --no-cache \
     bash \
     curl \
@@ -9,19 +14,16 @@ RUN apk add --no-cache \
     py3-pip \
     nodejs \
     npm \
-    git \
-    build-base
+    git
 
-# Install pipx and uvx cleanly
-RUN python3 -m venv /venv && \
-    /venv/bin/pip install pipx && \
-    /venv/bin/pipx install uvx && \
-    ln -s /root/.local/pipx/venvs/uvx/bin/uvx /usr/local/bin/uvx
+# Copy uv and uvx
+COPY --from=uvx-stage /uv /bin/uv
+COPY --from=uvx-stage /uvx /bin/uvx
 
-# Optional: verify
-RUN uvx --version || echo "uvx failed"
+# Install CLI tools
+RUN npm install -g firecrawl-mcp
 
-# Install global npm tools
-RUN npm install -g firecrawl-mcp @smithery/cli
+# Make sure the installed binary path is exposed
+ENV PATH="/root/.uvx/bin:$PATH"
 
 USER node
