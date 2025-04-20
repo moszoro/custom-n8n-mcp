@@ -21,12 +21,6 @@ COPY --from=uvx-stage /uv /bin/uv
 COPY --from=uvx-stage /uvx /bin/uvx
 
 # Install CLI tools
-RUN npm install -g firecrawl-mcp @smithery/cli
-
-# ✅ Install mcp-reddit safely (no blocking)
-RUN uvx --from git+https://github.com/adhikasp/mcp-reddit.git mcp-reddit --entrypoint="echo Installed mcp-reddit"
-
-# Make sure the installed binary path is exposed
-ENV PATH="/root/.uvx/bin:$PATH"
+RUN npm install -g firecrawl-mcp
 
 USER node
